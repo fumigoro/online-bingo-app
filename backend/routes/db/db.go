@@ -1,22 +1,21 @@
 package db
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
 	"fmt"
-	g "online-bingo/backend/routes/general"
 	"log"
-	"time"
+	g "online-bingo/backend/routes/general"
 	"strconv"
-	// "cloud.google.com/go/firestore"
-
+	"time"
 )
 
 func GetWinNumbers() (map[string]bool, error) {
 
 	ctx := context.Background()
 	firestoreClient := g.InitFirestore()
-	dsnap, err := firestoreClient.Collection("win_numbers").Doc("active").Get(ctx)
+	dsnap, err := firestoreClient.Collection("games").Doc("active").Get(ctx)
 	if err != nil {
 		// Handle any errors in an appropriate way, such as returning them.
 		log.Printf("An error has occurred(GetWinNumbers): %s", err)
@@ -25,19 +24,19 @@ func GetWinNumbers() (map[string]bool, error) {
 	defer firestoreClient.Close()
 
 	data := dsnap.Data()
-	if(data["numbers"] == nil){
+	if data["numbers"] == nil {
 		fmt.Println("nill!!")
 		return nil, errors.New("開始前です")
 	}
 	numbers := make(map[string]bool)
-	for i := 0;i<75;i++{
+	for i := 0; i < 75; i++ {
 		numbers[strconv.Itoa(i)] = data["numbers"].(map[string]interface{})[strconv.Itoa(i)].(bool)
 	}
 
 	return numbers, nil
 }
 
-func GetBingoMatrix(student_id string) ([][]int, error) {
+func GetBingoMatrix(studentId string) ([][]int, error) {
 	type Body struct {
 		last_modified time.Time
 		status        string
@@ -46,7 +45,7 @@ func GetBingoMatrix(student_id string) ([][]int, error) {
 
 	ctx := context.Background()
 	firestoreClient := g.InitFirestore()
-	dsnap, err := firestoreClient.Collection("cards").Doc(student_id).Get(ctx)
+	dsnap, err := firestoreClient.Collection("cards").Doc(studentId).Get(ctx)
 	if err != nil {
 		// Handle any errors in an appropriate way, such as returning them.
 		log.Printf("An error has occurred(GetBingoMatrix): %s", err)
@@ -72,6 +71,34 @@ func GetBingoMatrix(student_id string) ([][]int, error) {
 	}
 
 	return bingo_matrix, nil
+}
+
+func AddWinUser(studentId string, studentIdHash string, displayName string) error {
+	ctx := context.Background()
+	firestoreClient := g.InitFirestore()
+	_, err := firestoreClient.Collection("games").Doc("active").Collection("winners").Doc(studentIdHash).Set(ctx, map[string]interface{}{
+		"studentId":      studentId,
+		"studentId_hash": studentIdHash,
+		"display_name":   displayName,
+		"timestamp":      firestore.ServerTimestamp,
+		"prize_number":   -1,
+	})
+	if err != nil {
+		// Handle any errors in an appropriate way, such as returning them.
+		log.Printf("An error has occurred: %s", err)
+		return err
+	}
+
+	_, err = firestoreClient.Collection("cards").Doc(studentIdHash).Set(ctx, map[string]interface{}{
+		"status":        "bingo",
+		"last_modified": firestore.ServerTimestamp,
+	}, firestore.MergeAll)
+	if err != nil {
+		// Handle any errors in an appropriate way, such as returning them.
+		log.Printf("An error has occurred: %s", err)
+		return err
+	}
+	return nil
 }
 
 // func AddWinNumber(number int) error {

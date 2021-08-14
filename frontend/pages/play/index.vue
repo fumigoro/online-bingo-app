@@ -51,7 +51,9 @@ export default {
         },
         body: JSON.stringify({
           student_id_hash: student_id_hash,
+          student_id:cardData.student_id,
           array: array,
+          display_name:"やまだたろう"
         }),
       })
         .then(async (response) => {

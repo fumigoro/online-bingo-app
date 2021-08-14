@@ -55,30 +55,7 @@ export default {
     };
   },
   methods: {
-    // sendNumber() {
-    //   this.message = "";
-    //   const newNumber = String(Number(this.newNumber));
-    //   if (!/^[0-7]?[0-9]$/.test(this.newNumber)) {
-    //     this.message = "入力内容を確認してください";
-    //     console.log("入力内容を確認してください");
-    //     return;
-    //   }
 
-    //   for (let num of this.winNumbers) {
-    //     if (num == newNumber) {
-    //       //既出の場合
-    //       console.log("すでに出ています");
-    //       this.message = "すでに出ています";
-    //       return;
-    //     }
-    //   }
-    //   const db = firebase.firestore();
-    //   const winNumberRef = db.collection("win_numbers").doc("play");
-    //   // Atomically add a new region to the "regions" array field.
-    //   winNumberRef.update({
-    //     numbers: firebase.firestore.FieldValue.arrayUnion(Number(newNumber)),
-    //   });
-    // },
     async addNumber() {
       this.message = "";
       const newNumber = String(Number(this.newNumber));
@@ -106,7 +83,7 @@ export default {
       console.log({ data });
 
       const db = firebase.firestore();
-      const winNumbersDoc = db.collection("win_numbers").doc("active");
+      const winNumbersDoc = db.collection("games").doc("active");
       let winNumbersData;
       try {
         winNumbersData = await winNumbersDoc.get();
@@ -148,7 +125,7 @@ export default {
       data["created"] = firebase.firestore.FieldValue.serverTimestamp();
       data["modified"] = firebase.firestore.FieldValue.serverTimestamp();
       const db = firebase.firestore();
-      db.collection("win_numbers")
+      db.collection("games")
         .doc("active")
         .set(data)
         .then(() => {
@@ -191,7 +168,7 @@ export default {
         me.displayFlag.main = true;
         me.count = user.email + "でログイン中";
 
-        db.collection("win_numbers")
+        db.collection("games")
           .doc("active")
           .onSnapshot((doc) => {
             const data = doc.data();
