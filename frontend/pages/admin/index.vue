@@ -14,10 +14,13 @@
           <button @click="addNumber">登録</button>
           <button @click="initNumber">初期化</button>
         </div>
+        <WinnerList />
         <div>
           <h2>出た数字</h2>
           <div v-for="(value, number) in winNumbers" :key="number">
-            {{ number }} {{ value }}
+            <span v-bind:class="{ isTrue: value }"
+              >{{ number }} {{ value }}</span
+            >
           </div>
         </div>
       </div>
@@ -27,6 +30,7 @@
 
 <script>
 import AdminLogin from "../../components/AdminLogin.vue";
+import WinnerList from "../../components/WinnerList.vue";
 
 // Firebase App (the core Firebase SDK) is always required and must be listed first
 import firebase from "firebase/app";
@@ -41,7 +45,7 @@ import "firebase/auth";
 import "firebase/firestore";
 
 export default {
-  components: { AdminLogin },
+  components: { AdminLogin, WinnerList },
   data() {
     return {
       count: "",
@@ -55,7 +59,6 @@ export default {
     };
   },
   methods: {
-
     async addNumber() {
       this.message = "";
       const newNumber = String(Number(this.newNumber));
@@ -89,7 +92,7 @@ export default {
         winNumbersData = await winNumbersDoc.get();
       } catch (error) {
         console.log("Error getting document:", error);
-        this.message = "Error getting document:", error;
+        (this.message = "Error getting document:"), error;
 
         return;
       }
@@ -98,7 +101,7 @@ export default {
         this.message = "No such document!";
         return;
       }
-      if(!("created" in winNumbersData.data())){
+      if (!("created" in winNumbersData.data())) {
         console.log("初期化されていません");
         this.message = "初期化されていません";
         return;
@@ -135,13 +138,16 @@ export default {
           console.error("Error adding document: ", error);
         });
     },
-    logout(){
-      firebase.auth().signOut().then(()=>{
-        console.log("ログアウトしました");
-      })
-      .catch( (error)=>{
-        console.log(`ログアウト時にエラーが発生しました (${error})`);
-      });
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          console.log("ログアウトしました");
+        })
+        .catch((error) => {
+          console.log(`ログアウト時にエラーが発生しました (${error})`);
+        });
     },
   },
 
@@ -162,30 +168,35 @@ export default {
     const db = firebase.firestore();
     const me = this;
     firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        // User is signed in.
-        me.displayFlag.login = false;
-        me.displayFlag.main = true;
-        me.count = user.email + "でログイン中";
-
-        db.collection("games")
-          .doc("active")
-          .onSnapshot((doc) => {
-            const data = doc.data();
-            console.log("Current data: ", data);
-            if (data && "numbers" in data) {
-              me.winNumbers = data.numbers;
-              me.winNumbers = Object.assign(me.winNumbers, {});
-            } else {
-              me.winNumbers = { Error: "データがありません" };
-            }
-          });
-      } else {
+      if (!user) {
         me.displayFlag.login = true;
         me.displayFlag.main = false;
+        return;
       }
+      // User is signed in.
+      me.displayFlag.login = false;
+      me.displayFlag.main = true;
+      me.count = user.email + "でログイン中";
+
+      db.collection("games")
+        .doc("active")
+        .onSnapshot((doc) => {
+          const data = doc.data();
+          console.log("Current data: ", data);
+          if (data && "numbers" in data) {
+            me.winNumbers = data.numbers;
+            me.winNumbers = Object.assign(me.winNumbers, {});
+          } else {
+            me.winNumbers = { Error: "データがありません" };
+          }
+        });
     });
   },
 };
 </script>
 
+<style>
+.isTrue {
+  background-color: yellow;
+}
+</style>

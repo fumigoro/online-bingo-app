@@ -78,14 +78,14 @@ func ValidBingoCard(ctx *gin.Context) {
 	requestedmatrix, err := g.Array2Matrix55(body.Array, 5)
 	if err != nil {
 		fmt.Printf("ValidBingoCard Array2Matrix55/%s", err)
-		ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Rejected", "message": err})
+		ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Rejected", "message": err.Error()})
 		return
 	}
 	//DBに保存済みのビンゴ行列を取得
 	//TODO:DB取得エラーなのか、ビンゴカードが見つからなかったのかを判別する
 	verifyMatrix, err := db.GetBingoMatrix(body.StudentIdHash)
 	if err != nil {
-		ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Rejected", "message": "ビンゴカード未発行かも"})
+		ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Rejected", "message": err.Error()})
 		return
 	}
 	//DB保存済みのビンゴ行列とユーザーから届いた行列が一致しているかチェック（不正改ざんチェック）
@@ -116,27 +116,3 @@ func ValidBingoCard(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Passed", "message": ""})
 	
 }
-
-// func AddWinNumber(ctx *gin.Context){
-// 	type Params struct {
-// 		Number int `json:"number"`
-// 		Token string `json:"token"`
-// 	}
-// 	var body Params
-// 	err := ctx.Bind(&body)
-// 	fmt.Printf("param: %v\n", body)
-// 	if err != nil{
-// 		fmt.Printf("AddWinNumber bind/%s", err)
-// 		ctx.JSON(http.StatusBadRequest, map[string]interface{}{"number": body.Number, "message": "パラメーター受信失敗"})
-// 		return
-// 	}
-// 	fmt.Printf("AddWinNumber/number:%d\n",body.Number)
-// 	err = db.AddWinNumber(body.Number)
-
-// 	if err != nil{
-// 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"number": body.Number, "message": "DB書き込み失敗"})
-// 		return 
-// 	}
-
-// 	ctx.JSON(http.StatusOK, map[string]interface{}{"number": body.Number, "message": ""})
-// }

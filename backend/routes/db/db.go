@@ -56,6 +56,11 @@ func GetBingoMatrix(studentId string) ([][]int, error) {
 	var data Body
 	dsnap.DataTo(&data)
 	data2 := dsnap.Data()
+	
+	if data2["status"].(string) == "bingo"{
+		err = errors.New("すでにビンゴ登録が完了しています")
+		return nil, err;
+	}
 
 	var array []int
 	for i := range data2["bingo_array"].([]interface{}) {

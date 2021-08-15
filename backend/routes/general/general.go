@@ -14,7 +14,7 @@ import (
 func ByteArray2HexString(array [32]byte) string{
 	id_hash_str := ""
 	for i := range array {
-		id_hash_str += fmt.Sprintf("%0x", array[i])
+		id_hash_str += fmt.Sprintf("%02x", array[i])
 	}
 	return id_hash_str
 }
