@@ -44,7 +44,7 @@ export default {
         }
       }
 
-      fetch("/api/v1/validBingoCard", {
+      fetch(this.$config.API_URL+"/api/v1/validBingoCard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

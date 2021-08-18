@@ -48,5 +48,9 @@ export default {
   },
   generate: {
     dir: '../backend/public'
-  }
+  },
+  publicRuntimeConfig: {
+    BASE_URL: process.env.BASE_URL || 'http://locahost:3000',
+    API_URL: process.env.API_URL || 'http://localhost:8000',
+  },
 }

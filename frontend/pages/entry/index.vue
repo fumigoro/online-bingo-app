@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     send: async function (event) {
-      fetch("/api/v1/getBingoCard", {
+      fetch(this.$config.API_URL+"/api/v1/getBingoCard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default {
           if (response.status == 200) {
             const body = await response.json();
             this.matrix = body.matrix;
-            console.log(body.matrix);
+            console.log(body);
             const cardData = {
               matrix: body.matrix,
               student_id: this.student_id_entry,
