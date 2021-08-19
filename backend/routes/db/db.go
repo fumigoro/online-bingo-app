@@ -45,6 +45,7 @@ func GetBingoMatrix(studentId string) ([][]int, error) {
 
 	ctx := context.Background()
 	firestoreClient := g.InitFirestore()
+	fmt.Println("DB接続開始")
 	dsnap, err := firestoreClient.Collection("cards").Doc(studentId).Get(ctx)
 	if err != nil {
 		// Handle any errors in an appropriate way, such as returning them.
@@ -53,6 +54,7 @@ func GetBingoMatrix(studentId string) ([][]int, error) {
 	}
 	defer firestoreClient.Close()
 
+	fmt.Println("DB接続終了")
 	var data Body
 	dsnap.DataTo(&data)
 	data2 := dsnap.Data()

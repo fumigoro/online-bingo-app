@@ -83,12 +83,14 @@ func ValidBingoCard(ctx *gin.Context) {
 	}
 	//DBに保存済みのビンゴ行列を取得
 	//TODO:DB取得エラーなのか、ビンゴカードが見つからなかったのかを判別する
+	fmt.Println("DBに保存済みのビンゴ行列を取得")
 	verifyMatrix, err := db.GetBingoMatrix(body.StudentIdHash)
 	if err != nil {
 		ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Rejected", "message": err.Error()})
 		return
 	}
 	//DB保存済みのビンゴ行列とユーザーから届いた行列が一致しているかチェック（不正改ざんチェック）
+	fmt.Println("不正改ざんチェック")
 	for i := 0; i < len(requestedmatrix); i++ {
 		for j := 0; j < len(requestedmatrix[0]); j++ {
 			if verifyMatrix[i][j] != requestedmatrix[i][j] {
@@ -98,6 +100,7 @@ func ValidBingoCard(ctx *gin.Context) {
 		}
 	}
 	// ビンゴしているかチェック
+	fmt.Println("ビンゴしているかチェック")
 	bingoCount, err := bingoCard.GetBingoCount(requestedmatrix)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"result": "Failed", "message": "Dbエラー/出た数字の取得に失敗"})
@@ -108,11 +111,13 @@ func ValidBingoCard(ctx *gin.Context) {
 		return
 	}
 	// ビンゴ認定
+	fmt.Println("ビンゴ登録")
 	err = db.AddWinUser(body.StudentId,body.StudentIdHash,body.DisplauName)
 	if err != nil{
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"result": "Failed", "message": "Dbエラー/ビンゴ者リストへの登録失敗"})
 		return
 	}
+	fmt.Println("完了")
 	ctx.JSON(http.StatusOK, map[string]interface{}{"result": "Passed", "message": ""})
 	
 }
