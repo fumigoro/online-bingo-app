@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -34,28 +36,32 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: [
-  ],
+  buildModules: ["@nuxtjs/dotenv"],
+  dotenv: {
+    path: `env/`,
+    filename: `${process.env.NUXT_ENV || ""}.env`
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
-  ],
 
+  ],
+  env: {
+    BASE_HOST:process.env.BASE_HOST,
+    BASE_PORT:process.env.BASE_PORT,
+    API_HOST:process.env.API_HOST,
+    API_PORT:process.env.API_PORT,
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
   generate: {
     dir: '../backend/public'
   },
-  publicRuntimeConfig: {
-    BASE_URL: process.env.BASE_URL || 'http://locahost:3000',
-    API_URL: process.env.API_URL || 'http://localhost:8000',
-    API_HOST: process.env.API_HOST
-  },
   server: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 3000
   }
 }

@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	err := godotenv.Load(fmt.Sprintf("/envfiles/%s.env",os.Getenv("GO_ENV")))
+	err := godotenv.Load(fmt.Sprintf("env/%s.env",os.Getenv("GO_ENV")))
 	var apiUrl string
 	var baseUrl string
 	//もし err がnilではないなら、"読み込み出来ませんでした"が出力されます。
@@ -22,8 +22,8 @@ func main() {
 		apiUrl = "localhost:8000"
 		baseUrl = "http://localhost:3000"
 	} else {
-		apiUrl = os.Getenv("API_HOST")
-		baseUrl = os.Getenv("BASE_URL")
+		apiUrl = os.Getenv("API_HOST")+":"+os.Getenv("API_PORT")
+		baseUrl = os.Getenv("BASE_HOST")+":"+os.Getenv("BASE_PORT")
 	}
 
 	router := gin.Default()
@@ -47,6 +47,6 @@ func main() {
 		api_v1.POST("/getBingoCard", routes.GetBingoCard)
 		api_v1.POST("/validBingoCard", routes.ValidBingoCard)
 	}
-
+	fmt.Println(apiUrl)
 	router.Run(apiUrl)
 }

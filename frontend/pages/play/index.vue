@@ -44,7 +44,7 @@ export default {
         }
       }
 
-      fetch(this.$config.API_URL+"/api/v1/validBingoCard", {
+      fetch(process.env.API_HOST+":"+process.env.API_PORT+"/api/v1/validBingoCard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,6 @@ export default {
   },
   mounted: function () {
     this.init();
-    console.log(this.$config)
-  },
+},
 };
 </script>
