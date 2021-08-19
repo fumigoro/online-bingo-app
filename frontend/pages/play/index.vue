@@ -74,6 +74,7 @@ export default {
   },
   mounted: function () {
     this.init();
+    console.log(this.$config)
   },
 };
 </script>

@@ -7,5 +7,6 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-gonic/gin v1.7.3
+	github.com/joho/godotenv v1.3.0 // indirect
 	google.golang.org/api v0.54.0
 )

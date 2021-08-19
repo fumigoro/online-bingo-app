@@ -52,5 +52,10 @@ export default {
   publicRuntimeConfig: {
     BASE_URL: process.env.BASE_URL || 'http://locahost:3000',
     API_URL: process.env.API_URL || 'http://localhost:8000',
+    API_HOST: process.env.API_HOST
   },
+  server: {
+    host: '0.0.0.0',
+    port: 3000
+  }
 }

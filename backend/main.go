@@ -2,25 +2,35 @@ package main
 
 import (
 	"fmt"
-	"online-bingo/backend/routes"
-	"time"
-	"net/http"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"net/http"
+	"online-bingo/backend/routes"
+	"os"
+	"time"
 )
 
 func main() {
 
-	var hoge int
+	err := godotenv.Load(fmt.Sprintf("/envfiles/%s.env",os.Getenv("GO_ENV")))
+	var apiUrl string
+	var baseUrl string
+	//もし err がnilではないなら、"読み込み出来ませんでした"が出力されます。
+	if err != nil {
+		fmt.Printf("読み込み出来ませんでした: %v", err)
+		apiUrl = "localhost:8000"
+		baseUrl = "http://localhost:3000"
+	} else {
+		apiUrl = os.Getenv("API_HOST")
+		baseUrl = os.Getenv("BASE_URL")
+	}
 
-	fmt.Println(hoge)
-
-	fmt.Println("Hello!")
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{baseUrl},
 		AllowMethods:     []string{"PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin","content-type"},
+		AllowHeaders:     []string{"Origin", "content-type"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
@@ -28,15 +38,15 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-    // ルーターの設定
-    // URLへのアクセスに対して静的ページを返す
-    router.StaticFS("/", http.Dir("./public"))
+	// ルーターの設定
+	// URLへのアクセスに対して静的ページを返す
+	router.StaticFS("/", http.Dir("./public"))
 
 	api_v1 := router.Group("/api/v1")
-    {
+	{
 		api_v1.POST("/getBingoCard", routes.GetBingoCard)
 		api_v1.POST("/validBingoCard", routes.ValidBingoCard)
-    }
+	}
 
-	router.Run("localhost:8000")
+	router.Run(apiUrl)
 }
