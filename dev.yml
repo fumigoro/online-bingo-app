@@ -1,0 +1,25 @@
+version: "2"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./backend/dev.Dockerfile
+    ports:
+      - 8000:8000
+    environment: {GO_ENV:"docker-dev"}
+    volumes:
+      - ./backend:/backend
+    command: go run .
+
+
+  client:
+    build:
+      context: .
+      dockerfile: ./frontend/dev.Dockerfile
+    ports:
+      - 3000:3000
+    environment: {NUXT_ENV:"docker-dev"}
+
+    volumes:
+      - ./frontend:/frontend
+    command: npm run dev

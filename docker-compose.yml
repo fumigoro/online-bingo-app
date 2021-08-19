@@ -1,21 +1,13 @@
-version: '2'
-services: 
+version: "2"
+services:
   server:
-    build:     
+    build:
       context: .
-      dockerfile: ./backend/Dockerfile
+      dockerfile: ./backend/production.Dockerfile
     ports:
       - 8000:8000
+    environment: {GO_ENV:""}
     volumes:
-      - ./backend:/backend
-    command: go run .
+      - ./:/app
 
-  client:
-    build:
-        context: .
-        dockerfile: ./frontend/Dockerfile
-    ports:
-      - 3000:3000
-    volumes:
-      - ./frontend:/frontend
-    command: npm run dev
+    

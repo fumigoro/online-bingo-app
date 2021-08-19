@@ -2,7 +2,7 @@
   <div>
     <h2>ビンゴした人</h2>
     <ul>
-      <li v-for="winner in winners" :key="winner">
+      <li v-for="winner in winners" :key="winner.student_id_hash">
         <p>
           {{ winner.display_name }} {{ winner.studentId }}
           {{ winner.timestamp }}
@@ -45,8 +45,7 @@ export default {
     const me = this;
     firebase.auth().onAuthStateChanged(function (user) {
       if (!user) {
-        me.displayFlag.login = true;
-        me.displayFlag.main = false;
+        return;
       }
       // User is signed in.
       db.collection("games")

@@ -51,8 +51,7 @@ export default {
   env: {
     BASE_HOST:process.env.BASE_HOST,
     BASE_PORT:process.env.BASE_PORT,
-    API_HOST:process.env.API_HOST,
-    API_PORT:process.env.API_PORT,
+    API_HOST:process.env.API_URL
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

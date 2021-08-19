@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     send: async function (event) {
-      fetch(process.env.API_HOST+":"+process.env.API_PORT+"/api/v1/getBingoCard", {
+      fetch(process.env.API_URL+"/api/v1/getBingoCard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

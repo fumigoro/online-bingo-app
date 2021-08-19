@@ -17,7 +17,7 @@ import "firebase/auth";
 import "firebase/firestore";
 
 export default {
-  data() {},
+
   methods: {
     login() {
       const provider = new firebase.auth.GoogleAuthProvider();
